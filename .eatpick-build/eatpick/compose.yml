@@ -1,0 +1,36 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: eatpick
+      MYSQL_USER: eatpick
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - eatpick-mysql:/var/lib/mysql
+      - ./database/schema-mysql.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  api:
+    build: ./backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DB_URL: jdbc:mysql://mysql:3306/eatpick?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&characterEncoding=UTF-8
+      DB_USER: eatpick
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8081}
+      LLM_GATEWAY_URL: ${LLM_GATEWAY_URL:-}
+      LLM_GATEWAY_KEY: ${LLM_GATEWAY_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-unconfigured}
+    ports:
+      - "8080:8080"
+volumes:
+  eatpick-mysql:

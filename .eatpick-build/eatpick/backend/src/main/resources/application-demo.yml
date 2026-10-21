@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./data/eatpick;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+app:
+  demo: true

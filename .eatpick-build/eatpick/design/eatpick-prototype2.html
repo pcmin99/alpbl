@@ -1,0 +1,1233 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EEF1EB">
+<title>잇픽 앱 프로토타입</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/sun-typeface/SUIT@2/fonts/variable/woff2/SUIT-Variable.css">
+<style>
+:root{
+  --bg:#EEF1EB;
+  --surface:#FFFFFF;
+  --ink:#16261C;
+  --ink-2:#4A5850;
+  --ink-3:#5F6C64;
+  --line:#D5DCD3;
+  --brand:#14774F;
+  --brand-ink:#0E5A3B;
+  --brand-tint:#E2F0E8;
+  --yolk:#F5B92E;
+  --yolk-tint:#FFF4D8;
+  --low:#8A5A0B;
+  --low-bg:#FFF1D9;
+  --high:#B4372A;
+  --high-bg:#FBE6E2;
+  --ok:#2B6E4B;
+  --ok-bg:#E2F0E8;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  background:#DCE3D9;color:var(--ink);
+  font-family:'SUIT Variable','SUIT','Pretendard Variable','Pretendard','Apple SD Gothic Neo','Noto Sans KR',system-ui,sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;word-break:keep-all;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--yolk);outline-offset:2px;border-radius:8px}
+.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.ic{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic.fill{fill:currentColor;stroke:none}
+
+/* ---------- stage & device ---------- */
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding:24px}
+.aside{width:270px}
+.aside h1{font-size:28px;line-height:1.25;margin:0 0 12px;font-weight:850;letter-spacing:-.025em}
+.aside p{margin:0 0 12px;color:var(--ink-2);font-size:14.5px}
+.aside ol{margin:18px 0;padding-left:20px;color:var(--ink-2);font-size:14.5px}
+.aside ol li{margin-bottom:8px}
+.aside .aside-note{font-size:13px;color:var(--ink-3);border-top:1px solid #C7D0C5;padding-top:12px}
+@media (max-width:900px){.aside{display:none}}
+
+.device{
+  position:relative;width:390px;
+  height:min(844px, calc(100vh - 48px));height:min(844px, calc(100dvh - 48px));
+  background:var(--bg);border:10px solid var(--ink);border-radius:46px;overflow:hidden;
+  display:flex;flex-direction:column;box-shadow:0 30px 60px -24px rgba(22,38,28,.45);
+}
+.statusbar{flex:none;display:flex;justify-content:space-between;align-items:center;padding:12px 26px 0;font-size:14px;font-weight:700}
+.statusbar .sb{display:flex;gap:6px;align-items:center}
+.statusbar .sb i{display:block;width:18px;height:10px;border:1.5px solid var(--ink);border-radius:3px;position:relative}
+.statusbar .sb i::after{content:'';position:absolute;inset:1.5px 5px 1.5px 1.5px;background:var(--ink);border-radius:1px}
+@media (max-width:520px){
+  .stage{padding:0;display:block}
+  .device{width:100%;height:100vh;height:100dvh;border:0;border-radius:0;box-shadow:none}
+  .statusbar{display:none}
+}
+
+/* ---------- app bar ---------- */
+.appbar{flex:none;display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px}
+.logo{display:flex;align-items:center;gap:8px}
+.logo svg{width:30px;height:30px;flex:none}
+.logo-tx{font-weight:850;font-size:20px;letter-spacing:-.03em;line-height:1}
+.logo-tx small{display:block;font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:0;margin-top:2px}
+.plan-chip{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 13px;border-radius:999px;border:1.5px solid var(--ink);background:var(--surface);font-size:13px;font-weight:800}
+.plan-chip .ic{width:16px;height:16px}
+.plan-chip.is-premium{background:var(--ink);color:#fff}
+.plan-chip.is-premium .ic{color:var(--yolk)}
+
+/* ---------- screens ---------- */
+.screens{flex:1;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.screen{padding:4px 20px 36px}
+.date{margin:0;color:var(--ink-3);font-size:13px;font-weight:700}
+.h1{margin:2px 0 16px;font-size:26px;line-height:1.25;font-weight:850;letter-spacing:-.03em}
+.h1.tight{margin:0 0 6px;font-size:22px}
+.h2{margin:30px 0 10px;font-size:18px;font-weight:850;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.h3{margin:22px 0 10px;font-size:15px;font-weight:800}
+.muted{color:var(--ink-2);font-size:14px;margin:6px 0 12px}
+.small{font-size:12.5px}
+.card{background:var(--surface);border-radius:20px;padding:18px}
+.card-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.card-title{margin:0;font-size:16px;font-weight:850}
+.count{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 7px;border-radius:999px;background:var(--ink);color:#fff;font-size:12px;font-weight:800}
+.tag{display:inline-block;font-size:12px;font-weight:700;color:var(--ink-2);background:var(--bg);border-radius:6px;padding:1px 7px;margin-right:4px}
+.fine{font-size:12px;color:var(--ink-3);margin:14px 2px 0;line-height:1.5}
+.center{text-align:center}
+
+/* ---------- buttons & segmented ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;height:52px;padding:0 20px;border-radius:14px;font-size:16px;font-weight:800;text-align:center}
+.btn .ic{width:18px;height:18px}
+.btn.primary{background:var(--brand);color:#fff}
+.btn.primary:hover{background:var(--brand-ink)}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.line{background:var(--surface);color:var(--ink);border:1.5px solid var(--line)}
+.btn.line:hover{border-color:var(--ink-3)}
+.btn.ghost{background:transparent;color:var(--ink-2);height:46px;font-weight:700;margin-top:4px}
+.btn.sm{width:auto;height:38px;padding:0 12px;border-radius:10px;font-size:13px}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--ink)}
+.icon-btn:hover{background:rgba(22,38,28,.06)}
+.icon-btn.sm{width:32px;height:32px;border-radius:10px;color:var(--ink-3)}
+.icon-btn.sm .ic{width:16px;height:16px}
+.seg{display:flex;gap:4px;padding:4px;background:var(--surface);border-radius:13px}
+.seg button{flex:1;height:38px;border-radius:10px;font-size:14px;font-weight:800;color:var(--ink-2);display:inline-flex;align-items:center;justify-content:center;gap:5px;text-align:center}
+.seg button .ic{width:15px;height:15px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.seg.sm{background:var(--bg)}
+.seg.sm button{height:32px;font-size:13px;padding:0 10px}
+
+/* ---------- nutrition label (the signature element) ---------- */
+.nlabel{background:#fff;border:2px solid var(--ink);border-radius:4px;padding:0 14px 12px}
+.nl-band{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--ink);color:#fff;margin:0 -14px;padding:9px 14px}
+.nl-band strong{font-size:19px;font-weight:900;letter-spacing:-.03em}
+.nl-band span{font-size:13px;font-weight:700}
+.nl-kcal{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding:12px 0 10px;border-bottom:6px solid var(--ink)}
+.nl-kcal .k-label{font-weight:850;font-size:16px}
+.nl-kcal .k-right{text-align:right}
+.nl-kcal .k-num{display:block;font-size:40px;font-weight:850;line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.nl-kcal .k-num small{font-size:16px;font-weight:800;margin-left:3px;letter-spacing:0}
+.nl-kcal .k-sub{display:block;font-size:12px;color:var(--ink-3);font-weight:700;margin-top:6px}
+.nl-colhead{text-align:right;font-size:12px;font-weight:850;padding:6px 0;border-bottom:1px solid var(--ink)}
+.nl-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:8px 0;border-bottom:1px solid var(--ink);font-size:15px;font-variant-numeric:tabular-nums}
+.nl-row .nm b{font-weight:850;margin-right:4px}
+.nl-row .pc{font-weight:850}
+.nl-row.sub .nm{padding-left:16px}
+.nl-row.sub .nm b{font-weight:600}
+.nl-lock{display:flex;gap:8px;align-items:center;width:100%;padding:10px 0;border-bottom:1px solid var(--ink);font-size:13px;font-weight:700;color:var(--ink-2)}
+.nl-lock .ic{width:16px;height:16px}
+.nl-lock:hover{color:var(--ink)}
+.nl-note{margin:10px 0 0;font-size:12px;color:var(--ink-3)}
+
+/* ---------- home ---------- */
+.feedback{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:14px 16px;background:var(--surface);border-radius:16px}
+.feedback .fb-ic{width:30px;height:30px;border-radius:10px;background:var(--yolk-tint);color:#8A5A0B;display:grid;place-items:center;flex:none}
+.feedback .fb-ic .ic{width:16px;height:16px}
+.feedback p{margin:0;font-size:14px}
+.feedback p b{display:block;font-size:12px;color:var(--ink-3);font-weight:800;margin-bottom:1px}
+.nudge{display:flex;align-items:center;gap:12px;width:100%;margin-top:10px;padding:14px 16px;border-radius:16px;background:var(--brand-tint)}
+.nudge > span{flex:1}
+.nudge b{display:block;font-size:14.5px;font-weight:850}
+.nudge small{display:block;font-size:13px;color:var(--ok);font-weight:700}
+.nudge .ic{color:var(--brand-ink)}
+.slot{background:var(--surface);border-radius:18px;padding:14px 16px;margin-bottom:10px}
+.slot-head{display:flex;justify-content:space-between;align-items:baseline}
+.slot-head h3{margin:0;font-size:15px;font-weight:850}
+.slot-head span{font-size:13px;color:var(--ink-3);font-weight:700}
+.meal-list{list-style:none;margin:6px 0 0;padding:0}
+.meal{display:grid;grid-template-columns:44px 1fr auto 32px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.meal:first-child{border-top:0}
+.meal-tx b{display:block;font-weight:800;font-size:15px;line-height:1.3}
+.meal-tx > span{display:block;margin-top:3px}
+.meal-r{text-align:right;font-variant-numeric:tabular-nums}
+.meal-r b{display:block;font-weight:850}
+.meal-r b small{font-size:11px;font-weight:700;margin-left:1px}
+.meal-r span{font-size:12px;color:var(--ink-3)}
+.slot-empty{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:10px;padding:12px;border:1.5px dashed #BCC6BA;border-radius:12px;color:var(--ink-2);font-weight:700;font-size:14px}
+.slot-empty:hover{border-color:var(--brand);color:var(--brand-ink)}
+.slot-empty .ic{width:18px;height:18px}
+
+/* ---------- food "photos" ---------- */
+.ph{display:grid;place-items:center;width:100%;aspect-ratio:1;border-radius:16px;font-size:46px;overflow:hidden;position:relative}
+.ph .emo{filter:drop-shadow(0 3px 3px rgba(0,0,0,.25));line-height:1}
+.ph.wood{background:radial-gradient(circle at 50% 54%, #fdfcf9 0 31%, #e5ded2 32% 35%, transparent 36%),repeating-linear-gradient(100deg,#9b7653 0 9px,#8d6a49 9px 17px,#a07c58 17px 24px)}
+.ph.steel{background:radial-gradient(circle at 50% 54%, #ffffff 0 31%, #d7dbde 32% 35%, transparent 36%),linear-gradient(160deg,#c9ced2,#a9b0b5)}
+.ph.stone{background:radial-gradient(circle at 50% 54%, #fbfaf7 0 31%, #dfdbd4 32% 35%, transparent 36%),radial-gradient(circle at 30% 20%,#5b605c,#3c403e)}
+.ph.sm{width:44px;height:44px;border-radius:12px;font-size:22px}
+.ph.md{width:88px;height:88px;border-radius:18px;font-size:44px;flex:none}
+
+/* ---------- report ---------- */
+.stat{display:flex;align-items:baseline;gap:8px;margin:8px 0 2px}
+.stat b{font-size:36px;font-weight:850;letter-spacing:-.035em;line-height:1.1}
+.stat span{font-weight:700;color:var(--ink-2);font-size:14px}
+.chart{position:relative;margin:6px 0 16px}
+.chart svg{width:100%;height:auto;display:block;overflow:visible}
+.chart .grid{stroke:var(--line);stroke-width:1}
+.chart .target{stroke:var(--ink);stroke-width:1.5}
+.chart .bar{fill:var(--brand);transition:fill .12s}
+.chart .bar.on{fill:var(--brand-ink)}
+.chart .hit{fill:transparent;cursor:pointer;outline:none}
+.chart .hit:focus-visible{fill:rgba(245,185,46,.12);stroke:var(--yolk);stroke-width:2}
+.chart .ytick,.chart .xtick{fill:var(--ink-3);font-size:11px;font-weight:700;font-family:inherit}
+.chart .tlabel{fill:var(--ink);font-size:11px;font-weight:800;font-family:inherit}
+.chart-tip{position:absolute;left:0;top:0;transform:translate(-50%,-100%);background:var(--ink);color:#fff;font-size:12px;font-weight:800;padding:6px 9px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s}
+.chart-tip.show{opacity:1}
+.rtable{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.rtable th,.rtable td{padding:10px 0;border-bottom:1px solid var(--line);text-align:left}
+.rtable thead th{font-size:12px;color:var(--ink-3);font-weight:800;padding:6px 0}
+.rtable tbody th{font-weight:800}
+.rtable tr:last-child th,.rtable tr:last-child td{border-bottom:0}
+.rtable td:last-child,.rtable th:last-child{text-align:right}
+.st{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:850;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.st.low{background:var(--low-bg);color:var(--low)}
+.st.ok{background:var(--ok-bg);color:var(--ok)}
+.st.high{background:var(--high-bg);color:var(--high)}
+.coach{display:flex;gap:12px;align-items:flex-start}
+.coach-av{width:36px;height:36px;border-radius:12px;background:var(--ink);color:var(--yolk);display:grid;place-items:center;flex:none}
+.coach-av .ic{width:18px;height:18px}
+.coach p{margin:0;font-size:14.5px;line-height:1.6}
+.coach p b{display:block;font-size:13px;font-weight:850;margin-bottom:2px}
+.pipe{list-style:none;margin:0;padding:0;counter-reset:st}
+.pipe > li{position:relative;padding:0 0 18px 42px}
+.pipe > li::before{counter-increment:st;content:counter(st);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;font-weight:850;font-size:14px;display:grid;place-items:center}
+.pipe > li::after{content:'';position:absolute;left:13.5px;top:32px;bottom:4px;width:1px;background:var(--line)}
+.pipe > li:last-child{padding-bottom:4px}
+.pipe > li:last-child::after{display:none}
+.pipe h4{margin:3px 0 8px;font-size:15px;font-weight:850}
+.pipe ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+.pipe ul li{font-size:12.5px;font-weight:700;background:var(--bg);border-radius:8px;padding:4px 9px;color:var(--ink-2)}
+
+/* ---------- locked (premium) ---------- */
+.locked{position:relative;border-radius:20px;overflow:hidden}
+.locked .blurred{filter:blur(6px);opacity:.55;pointer-events:none;user-select:none}
+.lock-cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center}
+.lock-cover .lk{width:40px;height:40px;border-radius:14px;background:var(--ink);color:var(--yolk);display:grid;place-items:center}
+.lock-cover p{margin:0;font-weight:800;font-size:14px;max-width:240px}
+
+/* ---------- shop ---------- */
+.basis{background:var(--ink);color:#fff;border-radius:20px;padding:18px}
+.basis-title{display:flex;align-items:center;gap:6px;margin:0 0 12px;font-size:13px;font-weight:800;color:var(--yolk)}
+.basis-title .ic{width:16px;height:16px}
+.basis-nums{display:flex;gap:24px}
+.basis-nums span{display:block;font-size:12.5px;font-weight:700;opacity:.8}
+.basis-nums b{font-size:28px;font-weight:850;letter-spacing:-.03em}
+.meter{height:8px;border-radius:4px;background:rgba(255,255,255,.18);margin:12px 0;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--yolk);border-radius:4px}
+.basis-out{margin:0;font-size:14.5px;font-weight:700}
+.shop-seg{margin-top:18px}
+.list-card{padding:6px 16px}
+.demo-note{margin:10px 0 0;font-size:12px;color:var(--ink-3);font-weight:700}
+.prod-list{list-style:none;margin:0;padding:0}
+.prod{display:grid;grid-template-columns:30px 64px 1fr;gap:10px 12px;padding:16px 0;border-bottom:1px solid var(--line)}
+.prod .reasons,.prod .prod-actions{grid-column:2 / -1;margin-top:0}
+.prod-actions .btn{flex:1}
+.prod:last-child{border-bottom:0}
+.prod-rank{font-weight:850;font-size:15px;line-height:1.2;text-align:center;padding-top:2px}
+.prod-rank small{display:block;font-size:11px;font-weight:850;margin-top:5px}
+.prod-rank .up{color:var(--brand)}
+.prod-rank .down{color:var(--ink-3)}
+.prod-img{width:64px;height:64px;border-radius:14px;background:var(--bg);display:grid;place-items:center}
+.prod-img svg{width:50px;height:50px}
+.prod-name{display:block;font-weight:850;font-size:15px;line-height:1.35}
+.prod-unit{font-size:13px;color:var(--ink-3)}
+.prod-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:4px}
+.price{font-weight:850;font-variant-numeric:tabular-nums}
+.deliv{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:800;padding:2px 8px;border-radius:6px;background:var(--bg);color:var(--ink-2)}
+.deliv .ic{width:12px;height:12px}
+.deliv.fast{background:var(--yolk-tint);color:#6B4A00}
+.reasons{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.reasons span{font-size:12px;font-weight:800;color:var(--brand-ink);background:var(--brand-tint);padding:3px 8px;border-radius:6px}
+.prod-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.cart-list{list-style:none;margin:4px 0 14px;padding:0}
+.cart-list li{display:grid;grid-template-columns:auto 1fr 32px;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.cart-list li:first-child{border-top:0}
+.cart-list b{display:block;font-weight:850;font-size:14.5px}
+.cart-list div span{font-size:12.5px;color:var(--ink-3)}
+.tag-auto,.tag-mine{font-size:11px;font-weight:850;padding:3px 7px;border-radius:6px}
+.tag-auto{color:var(--brand-ink);background:var(--brand-tint)}
+.tag-mine{color:#fff;background:var(--ink)}
+.empty{margin:4px 0;color:var(--ink-2);font-size:14px}
+
+/* ---------- my ---------- */
+.profile{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.avatar{width:56px;height:56px;border-radius:18px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:850;font-size:22px;flex:none}
+.plan-card .plan-now{margin:0;font-size:17px;font-weight:850}
+.plan-card.is-premium{background:var(--ink);color:#fff}
+.plan-card.is-premium .muted{color:rgba(255,255,255,.8)}
+.cmp-card{padding:6px 14px}
+.cmp{width:100%;border-collapse:collapse;font-size:13px;line-height:1.45}
+.cmp th,.cmp td{padding:10px 6px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
+.cmp tr:last-child th,.cmp tr:last-child td{border-bottom:0}
+.cmp thead th{font-size:12px;color:var(--ink-3);font-weight:850}
+.cmp tbody th{font-weight:800;width:31%}
+.cmp td{width:30%;color:var(--ink-2);font-weight:600}
+.cmp .prem{background:var(--yolk-tint);color:var(--ink);width:39%}
+.cmp thead .prem{color:var(--ink)}
+.cmp .ic{width:18px;height:18px;color:var(--brand);stroke-width:2.4}
+.cmp .no{color:var(--ink-3)}
+.plan-list{list-style:none;margin:12px 0 0;padding:0}
+.plan-meal{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:baseline;padding:10px 0;border-top:1px solid var(--line)}
+.pm-slot{font-weight:850;font-size:13px}
+.pm-foods{font-size:14px;font-weight:600}
+.pm-num{text-align:right;font-weight:850;font-size:13.5px;font-variant-numeric:tabular-nums}
+.pm-num small{display:block;font-size:12px;color:var(--ink-3);font-weight:700}
+.plan-total{margin:10px 0 0;padding-top:10px;border-top:2px solid var(--ink);font-weight:850}
+
+/* ---------- tab bar ---------- */
+.tabbar{flex:none;display:grid;grid-template-columns:repeat(5,1fr);align-items:end;background:var(--surface);border-top:1px solid var(--line);padding:6px 6px calc(8px + env(safe-area-inset-bottom));position:relative;z-index:5}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:700;color:var(--ink-3);padding:4px 0;text-align:center}
+.tab .ic{width:22px;height:22px}
+.tab[aria-current="page"]{color:var(--ink)}
+.tab[aria-current="page"] .ic{stroke-width:2.3}
+.cam-btn{width:54px;height:54px;border-radius:18px;background:var(--brand);color:#fff;display:grid;place-items:center;margin-top:-24px;box-shadow:0 10px 18px -8px rgba(20,119,79,.75)}
+.tab-cam{color:var(--ink)}
+.tab-cam .ic{width:26px;height:26px}
+.tab-cam:hover .cam-btn{background:var(--brand-ink)}
+
+/* ---------- overlays ---------- */
+.ov{position:absolute;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column}
+.ov[hidden]{display:none}
+#ov-pick{z-index:32}
+#ov-result{z-index:34}
+.ov-head{flex:none;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;padding:14px 12px 8px}
+.ov-head h2{margin:0;text-align:center;font-size:17px;font-weight:850}
+.ov-body{flex:1;overflow-y:auto;padding:4px 20px 28px}
+.ov-foot{flex:none;padding:12px 20px calc(14px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--line)}
+.finder{position:relative;margin-top:14px;border-radius:24px;background:#1D2B22;color:#fff;aspect-ratio:4/3.2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px;text-align:center}
+.finder p{margin:0;font-size:14px;font-weight:700;opacity:.9}
+.finder .ic{width:34px;height:34px;opacity:.85}
+.finder .btn{width:auto;height:46px;font-size:14.5px}
+.cn{position:absolute;width:26px;height:26px;border:3px solid var(--yolk)}
+.cn.tl{top:16px;left:16px;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
+.cn.tr{top:16px;right:16px;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
+.cn.bl{bottom:16px;left:16px;border-right:0;border-top:0;border-radius:0 0 0 10px}
+.cn.br{bottom:16px;right:16px;border-left:0;border-top:0;border-radius:0 0 10px 0}
+.scan-left{display:flex;align-items:center;justify-content:center;gap:6px;margin:12px 0 0;font-size:13px;font-weight:700;color:var(--ink-2)}
+.scan-left .ic{width:15px;height:15px;color:#B7871B}
+.samples{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sample{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:800;text-align:center;border-radius:16px}
+.sample:hover .ph{outline:3px solid var(--brand);outline-offset:-3px}
+
+.an{background:var(--ink);color:#fff;align-items:center;justify-content:center;padding:24px;z-index:40}
+.an-photo{position:relative;width:220px;height:220px;border-radius:26px;overflow:hidden;background:#2a3a30}
+.an-photo .ph{width:100%;height:100%;border-radius:0;font-size:100px;aspect-ratio:auto}
+.an-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.scanline{position:absolute;left:0;right:0;top:0;height:3px;background:var(--yolk);box-shadow:0 0 18px 4px rgba(245,185,46,.55);animation:scan 1.3s ease-in-out infinite alternate}
+@keyframes scan{to{top:calc(100% - 3px)}}
+.an-steps{list-style:none;padding:0;margin:30px 0 0;width:250px}
+.an-steps li{display:flex;align-items:center;gap:10px;padding:7px 0;color:rgba(255,255,255,.5);font-weight:700;font-size:15px;transition:color .2s}
+.an-steps .dot{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,.35);display:grid;place-items:center;flex:none;color:transparent}
+.an-steps .dot .ic{width:14px;height:14px;stroke-width:2.6}
+.an-steps li.now{color:#fff}
+.an-steps li.now .dot{border-color:var(--yolk)}
+.an-steps li.done{color:#fff}
+.an-steps li.done .dot{background:var(--yolk);border-color:var(--yolk);color:var(--ink)}
+.an-note{margin:22px 0 0;font-size:13px;opacity:.7;font-weight:700}
+
+.res-top{display:flex;gap:14px;align-items:center;margin-top:6px}
+.res-top img{width:88px;height:88px;border-radius:18px;object-fit:cover;flex:none}
+.res-id{flex:1;min-width:0}
+.res-kicker{margin:0;font-size:13px;font-weight:800;color:var(--ink-3);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.model-badge{font-size:11px;font-weight:850;padding:2px 7px;border-radius:6px}
+.model-badge.device{background:var(--brand-tint);color:var(--brand-ink)}
+.model-badge.cloud{background:var(--ink);color:var(--yolk)}
+.res-name{margin:2px 0 6px;font-size:26px;font-weight:850;letter-spacing:-.03em;line-height:1.2}
+.conf{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:800}
+.conf-bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.conf-bar i{display:block;height:100%;background:var(--brand);border-radius:3px}
+.notice{display:flex;gap:8px;align-items:flex-start;margin:14px 0 0;padding:11px 12px;border-radius:12px;background:var(--low-bg);color:var(--low);font-size:13px;font-weight:700}
+.notice .ic{width:17px;height:17px;margin-top:1px}
+.notice.info{background:var(--surface);color:var(--ink-2)}
+.cands{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-size:13.5px;font-weight:800}
+.chip small{font-weight:700;color:var(--ink-3)}
+.chip .ic{width:15px;height:15px}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.chip[aria-pressed="true"] small{color:rgba(255,255,255,.75)}
+.res-label{margin-top:22px}
+.impact{margin:14px 2px 0;font-size:14px;color:var(--ink-2)}
+.impact b{color:var(--ink)}
+
+.search{display:flex;align-items:center;gap:8px;height:48px;padding:0 14px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);margin-top:6px}
+.search:focus-within{border-color:var(--ink)}
+.search .ic{color:var(--ink-3)}
+.search input{flex:1;border:0;outline:0;background:transparent;font-size:15px;min-width:0}
+.pick-list{list-style:none;margin:12px 0 0;padding:0;background:var(--surface);border-radius:18px;overflow:hidden}
+.pick-list li + li{border-top:1px solid var(--line)}
+.pick-item{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;padding:10px 14px}
+.pick-item:hover{background:var(--bg)}
+.pi-tx b{display:block;font-weight:850;font-size:15px;color:var(--ink)}
+.pi-tx small{display:block;font-size:12.5px;color:var(--ink-3)}
+.pi-kc{font-weight:800;font-size:13px;color:var(--ink-2)}
+.pick-thumb{display:flex;gap:12px;align-items:center;margin-top:12px}
+.pick-thumb img{width:56px;height:56px;border-radius:14px;object-fit:cover}
+
+/* ---------- bottom sheet & toast ---------- */
+.sheet-wrap{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;justify-content:flex-end;background:rgba(22,38,28,.45)}
+.sheet-wrap[hidden]{display:none}
+.sheet{background:var(--surface);border-radius:26px 26px 0 0;padding:10px 20px calc(18px + env(safe-area-inset-bottom));max-height:90%;overflow-y:auto}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 16px}
+.sheet h2{font-size:20px;font-weight:850;margin:0 0 4px;letter-spacing:-.025em;line-height:1.35}
+.benefits{list-style:none;padding:0;margin:14px 0 18px}
+.benefits li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;font-weight:700;font-size:14.5px}
+.benefits .ic{color:var(--brand);stroke-width:2.4;margin-top:1px}
+.plan-opts{display:grid;gap:10px;margin-top:16px}
+.plan-opt{display:block;width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--line);background:var(--surface)}
+.plan-opt b{display:block;font-size:15.5px;font-weight:850}
+.plan-opt span{display:block;font-size:13px;color:var(--ink-2);margin-top:2px}
+.plan-opt[aria-pressed="true"]{border-color:var(--ink);background:var(--bg)}
+.toast{position:absolute;left:50%;bottom:100px;transform:translate(-50%,10px);opacity:0;background:var(--ink);color:#fff;padding:12px 16px;border-radius:14px;font-size:14px;font-weight:800;z-index:60;transition:opacity .2s,transform .2s;pointer-events:none;width:max-content;max-width:calc(100% - 40px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){
+  .scanline{animation:none;top:50%}
+  .toast,.chart .bar,.chart-tip,.an-steps li{transition:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.5 10.2 12 3.5l8.5 6.7v9.3a1.5 1.5 0 0 1-1.5 1.5H15v-6H9v6H5a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20.5h16M7 17v-5M12 17V6M17 17V9"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4.5 7.5h3l1.7-2.5h5.6l1.7 2.5h3A1.5 1.5 0 0 1 21 9v9.5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5V9a1.5 1.5 0 0 1 1.5-1.5z"/><circle cx="12" cy="13.5" r="3.6"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.1 11.6a1.5 1.5 0 0 1-1.5 1.4H7.6a1.5 1.5 0 0 1-1.5-1.4z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.8 4.2-5.8 7.5-5.8s6.1 2 7.5 5.8"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.2l2.6 5.5 6 .7-4.4 4.1 1.2 5.9L12 16.5l-5.4 2.9 1.2-5.9-4.4-4.1 6-.7z"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.3-4.3"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3.5l1.9 5.6 5.6 1.9-5.6 1.9-1.9 5.6-1.9-5.6-5.6-1.9 5.6-1.9z"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13.5 2.5 5 13.5h6l-1 8 8.5-11h-6z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5v.01"/></symbol>
+  </defs>
+</svg>
+
+<div class="stage">
+  <aside class="aside">
+    <h1>잇픽 앱 프로토타입</h1>
+    <p>음식 사진 한 장으로 영양을 분석하고, 부족한 영양소에 맞는 식품을 장보기 목록까지 이어주는 흐름을 직접 눌러볼 수 있어요.</p>
+    <ol>
+      <li>가운데 카메라 버튼을 누르고 샘플 사진으로 식사를 기록해 보세요.</li>
+      <li>분석 탭에서 최근 7일 단백질 분석을 확인해요.</li>
+      <li>추천 탭에서 AI 추천 상품과 자동 장보기 목록을 봐요.</li>
+      <li>오른쪽 위 요금제 버튼으로 무료와 프리미엄 화면을 비교해요.</li>
+    </ol>
+    <p class="aside-note">팀 알바트로스, 기업연계형 AI기술 기반 PBL. 화면 속 영양 수치와 상품 정보, 가격은 시연용 예시예요.</p>
+  </aside>
+
+  <div class="device" id="device">
+    <div class="statusbar" aria-hidden="true"><span id="clock">9:41</span><span class="sb"><i></i></span></div>
+
+    <header class="appbar">
+      <div class="logo">
+        <svg viewBox="0 0 30 30" aria-hidden="true"><rect width="30" height="30" rx="10" fill="#14774F"/><circle cx="15" cy="15" r="8" fill="none" stroke="#fff" stroke-width="2"/><path d="M11.4 15.2l2.5 2.5 4.9-5.1" fill="none" stroke="#F5B92E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span class="logo-tx">잇픽<small>EatPick</small></span>
+      </div>
+      <button class="plan-chip" id="plan-chip" data-act="open-plan"></button>
+    </header>
+
+    <main class="screens" id="screens">
+      <section class="screen" id="screen-home" aria-label="홈"></section>
+      <section class="screen" id="screen-report" aria-label="분석" hidden></section>
+      <section class="screen" id="screen-shop" aria-label="추천" hidden></section>
+      <section class="screen" id="screen-my" aria-label="내 정보" hidden></section>
+    </main>
+
+    <nav class="tabbar" aria-label="주요 메뉴">
+      <button class="tab" data-act="tab" data-tab="home"><svg class="ic" aria-hidden="true"><use href="#i-home"/></svg>홈</button>
+      <button class="tab" data-act="tab" data-tab="report"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg>분석</button>
+      <button class="tab tab-cam" data-act="open-capture" aria-label="사진으로 식사 기록"><span class="cam-btn"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg></span>기록</button>
+      <button class="tab" data-act="tab" data-tab="shop"><svg class="ic" aria-hidden="true"><use href="#i-bag"/></svg>추천</button>
+      <button class="tab" data-act="tab" data-tab="my"><svg class="ic" aria-hidden="true"><use href="#i-user"/></svg>내 정보</button>
+    </nav>
+
+    <!-- 촬영 -->
+    <div class="ov" id="ov-capture" hidden role="dialog" aria-modal="true" aria-labelledby="cap-title">
+      <header class="ov-head">
+        <button class="icon-btn" data-act="close-capture" aria-label="닫기"><svg class="ic" aria-hidden="true"><use href="#i-close"/></svg></button>
+        <h2 id="cap-title">식사 기록</h2><span></span>
+      </header>
+      <div class="ov-body">
+        <div class="seg" id="cap-slots" role="group" aria-label="끼니 선택"></div>
+        <div class="finder">
+          <span class="cn tl"></span><span class="cn tr"></span><span class="cn bl"></span><span class="cn br"></span>
+          <svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg>
+          <p>음식이 화면에 가득 차게 찍어주세요</p>
+          <button class="btn primary" data-act="pick-photo">사진 찍기 또는 앨범에서 고르기</button>
+        </div>
+        <p class="scan-left" id="cap-scans"></p>
+        <h3 class="h3">샘플 사진으로 체험하기</h3>
+        <div class="samples" id="cap-samples"></div>
+      </div>
+    </div>
+
+    <!-- 음식 찾기 -->
+    <div class="ov" id="ov-pick" hidden role="dialog" aria-modal="true" aria-labelledby="pick-title">
+      <header class="ov-head">
+        <button class="icon-btn" data-act="close-pick" aria-label="뒤로"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></button>
+        <h2 id="pick-title">음식 찾기</h2><span></span>
+      </header>
+      <div class="ov-body">
+        <div id="pick-note"></div>
+        <label class="search"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><span class="sr-only">음식 이름</span><input id="pick-q" type="search" placeholder="음식 이름으로 찾기" autocomplete="off"></label>
+        <ul class="pick-list" id="pick-list"></ul>
+      </div>
+    </div>
+
+    <!-- 인식 결과 -->
+    <div class="ov" id="ov-result" hidden role="dialog" aria-modal="true" aria-labelledby="res-title">
+      <header class="ov-head">
+        <button class="icon-btn" data-act="retake" aria-label="다시 찍기"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></button>
+        <h2 id="res-title">인식 결과</h2><span></span>
+      </header>
+      <div class="ov-body" id="res-body"></div>
+      <div class="ov-foot"><button class="btn primary" id="res-save" data-act="save-meal">기록하기</button></div>
+    </div>
+
+    <!-- 분석 중 -->
+    <div class="ov an" id="ov-analyzing" hidden role="dialog" aria-modal="true" aria-label="사진 분석 중" tabindex="-1"></div>
+
+    <div class="sheet-wrap" id="sheet" hidden><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title"></div></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <input type="file" id="photo-input" accept="image/*" class="sr-only" tabindex="-1" aria-hidden="true">
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= 데이터 (모두 시연용 예시값) ================= */
+const FOODS = {
+  kimchistew: { name:'김치찌개',        emoji:'🍲', bg:'wood',  serving:'400g', kcal:245, carb:11, sugar:4,  protein:17,   fat:15,  sodium:1960, fiber:3.2 },
+  bibimbap:   { name:'비빔밥',          emoji:'🥘', bg:'stone', serving:'1그릇 500g', kcal:590, carb:92, sugar:9,  protein:21,   fat:15,  sodium:1150, fiber:6.1 },
+  jeyuk:      { name:'제육볶음',        emoji:'🥩', bg:'stone', serving:'200g', kcal:420, carb:16, sugar:10, protein:27,   fat:27,  sodium:1080, fiber:2.4 },
+  salad:      { name:'닭가슴살 샐러드', emoji:'🥗', bg:'steel', serving:'1접시 300g', kcal:290, carb:13, sugar:6,  protein:33,   fat:11,  sodium:480,  fiber:4.5 },
+  ramyeon:    { name:'라면',            emoji:'🍜', bg:'wood',  serving:'1봉지 550g', kcal:505, carb:79, sugar:4,  protein:10,   fat:17,  sodium:1790, fiber:3.0 },
+  rice:       { name:'공기밥',          emoji:'🍚', bg:'steel', serving:'1공기 210g', kcal:315, carb:69, sugar:0,  protein:6,    fat:1,   sodium:4,    fiber:0.6 },
+  doenjang:   { name:'된장찌개',        emoji:'🍲', bg:'wood',  serving:'400g', kcal:160, carb:11, sugar:3,  protein:12,   fat:8,   sodium:1720, fiber:3.5 },
+  sundubu:    { name:'순두부찌개',      emoji:'🍲', bg:'stone', serving:'400g', kcal:235, carb:9,  sugar:3,  protein:16,   fat:15,  sodium:1580, fiber:2.0 },
+  gimbap:     { name:'김밥',            emoji:'🍱', bg:'wood',  serving:'1줄 230g',   kcal:485, carb:74, sugar:6,  protein:14,   fat:14,  sodium:1020, fiber:3.1 },
+  tteokbokki: { name:'떡볶이',          emoji:'🍢', bg:'steel', serving:'200g', kcal:380, carb:79, sugar:17, protein:8,    fat:4,   sodium:1120, fiber:2.2 },
+  yogurt:     { name:'그릭요거트',      emoji:'🥣', bg:'stone', serving:'1컵 150g',   kcal:135, carb:9,  sugar:7,  protein:13,   fat:5,   sodium:55,   fiber:0 },
+  egg:        { name:'삶은 달걀',       emoji:'🥚', bg:'wood',  serving:'2개 100g',   kcal:145, carb:1,  sugar:1,  protein:12.6, fat:10,  sodium:140,  fiber:0 },
+  donkatsu:   { name:'돈가스',          emoji:'🍖', bg:'wood',  serving:'250g', kcal:690, carb:52, sugar:8,  protein:29,   fat:40,  sodium:1150, fiber:2.5 },
+  chicken:    { name:'닭가슴살',        emoji:'🍗', bg:'steel', serving:'1팩 100g',   kcal:110, carb:1,  sugar:0,  protein:23,   fat:1.5, sodium:380,  fiber:0 },
+};
+
+// 샘플 사진별 모델 예측 후보 (음식, 신뢰도 %)
+const SAMPLES = [
+  { food:'kimchistew', cands:[['kimchistew',87],['sundubu',7],['doenjang',4]],    pcands:[['kimchistew',96],['sundubu',3],['doenjang',1]] },
+  { food:'bibimbap',   cands:[['bibimbap',91],['gimbap',4],['jeyuk',2]],           pcands:[['bibimbap',97],['gimbap',2],['jeyuk',1]] },
+  { food:'salad',      cands:[['salad',84],['yogurt',6],['bibimbap',4]],           pcands:[['salad',95],['yogurt',3],['bibimbap',1]] },
+  { food:'ramyeon',    cands:[['ramyeon',93],['kimchistew',3],['tteokbokki',2]],   pcands:[['ramyeon',98],['kimchistew',1],['tteokbokki',1]] },
+  { food:'tteokbokki', cands:[['tteokbokki',89],['jeyuk',5],['kimchistew',3]],     pcands:[['tteokbokki',96],['jeyuk',2],['kimchistew',1]] },
+  { food:'jeyuk',      cands:[['jeyuk',78],['tteokbokki',11],['donkatsu',6]],      pcands:[['jeyuk',93],['tteokbokki',4],['donkatsu',2]] },
+];
+
+// 예시 프로필(근성장)의 1일 목표. 단백질 100g은 발표자료 기준
+const TARGET = { kcal:2300, carb:320, sugar:50, protein:100, fat:65, sodium:2000, fiber:25 };
+const META = {
+  kcal:    { label:'열량',     unit:'kcal' },
+  carb:    { label:'탄수화물', unit:'g' },
+  sugar:   { label:'당류',     unit:'g',  sub:true, premium:true, limit:true },
+  protein: { label:'단백질',   unit:'g' },
+  fat:     { label:'지방',     unit:'g' },
+  sodium:  { label:'나트륨',   unit:'mg', premium:true, limit:true },
+  fiber:   { label:'식이섬유', unit:'g',  premium:true },
+};
+const LABEL_ORDER = ['carb','sugar','protein','fat','sodium','fiber'];
+const REPORT_KEYS = ['kcal','protein','carb','fat','sugar','sodium','fiber'];
+
+// 최근 7일 단백질 (평균 67g, 발표자료 기준)
+const WEEK_PROTEIN = [58,72,61,80,55,70,73];
+const REPORT = {
+  week:  { title:'최근 7일 평균', kcal:2271, carb:305, protein:67, fat:70, sugar:45, sodium:2843, fiber:14.1 },
+  month: { title:'최근 4주 평균', kcal:2210, carb:298, protein:64, fat:72, sugar:48, sodium:2920, fiber:13.2 },
+};
+
+const PRODUCTS = [
+  { id:'hans',   name:'한스바커 닭가슴살', unit:'10팩 묶음', price:19900, fast:true,  basicRank:3, aiRank:1, tint:'#D6E8DC',
+    reasons:['7일 평균 단백질 33g 부족','저녁 단백질이 가장 낮음','간편식 선호'] },
+  { id:'harim',  name:'하림 닭가슴살',     unit:'10팩 묶음', price:17900, fast:true,  basicRank:1, aiRank:2, tint:'#F3E4C9',
+    reasons:['7일 평균 단백질 33g 부족','조리 없이 먹는 형태 선호'] },
+  { id:'hankki', name:'한끼통살 닭가슴살', unit:'10팩 묶음', price:18500, fast:false, basicRank:2, aiRank:3, tint:'#E4E1EE',
+    reasons:['7일 평균 단백질 33g 부족'] },
+];
+
+const AUTO_ITEMS = [
+  { id:'a-chicken', name:'닭가슴살',    why:'단백질 7일 평균 33g 부족' },
+  { id:'a-egg',     name:'달걀',        why:'아침 단백질 보충' },
+  { id:'a-yogurt',  name:'그릭요거트',  why:'간식으로 단백질 보충' },
+  { id:'a-greens',  name:'샐러드 채소', why:'식이섬유 7일 평균 목표의 56%', premium:true },
+];
+
+const GOAL_PLANS = {
+  '다이어트': [['아침',[['yogurt',1],['egg',1]]], ['점심',[['bibimbap',1]]], ['저녁',[['salad',1],['rice',0.5]]], ['간식',[['chicken',1]]]],
+  '유지':     [['아침',[['gimbap',1]]], ['점심',[['jeyuk',1],['rice',1]]], ['저녁',[['sundubu',1],['rice',1]]], ['간식',[['yogurt',1]]]],
+  '근성장':   [['아침',[['egg',1],['rice',1],['yogurt',1]]], ['점심',[['jeyuk',1],['rice',1]]], ['저녁',[['salad',1],['rice',1]]], ['간식',[['chicken',1],['egg',1]]]],
+};
+
+const CMP_ROWS = [
+  ['AI 분석 모델', '온디바이스 모델 (휴대폰에서 분석)', '외부 고성능 AI 모델'],
+  ['음식 사진 인식', '하루 5회', '무제한'],
+  ['기본 영양 분석', '칼로리, 탄단지', '당·나트륨·식이섬유 등 상세 분석'],
+  ['음식·상품 추천', '기본 추천', '개인 식단 데이터 기반 맞춤 추천'],
+  ['쇼핑몰 구매 연동', true, true],
+  ['식단 리포트', false, '주간·월간 상세 리포트'],
+  ['개인 맞춤 영양 피드백', '간단 피드백', '장기 식습관·목표 기반 상세 피드백'],
+  ['목표별 식단 추천', false, '다이어트·유지·근성장 맞춤 식단'],
+  ['AI 식단 코치', false, true],
+  ['이용 가격', '무료', '월 4,900원'],
+];
+
+const PAY_TITLES = {
+  scan:   '오늘 무료 사진 인식 5회를 모두 썼어요',
+  detail: '당류, 나트륨, 식이섬유 분석은 프리미엄에서 볼 수 있어요',
+  report: '주간·월간 리포트는 프리미엄에서 볼 수 있어요',
+  shop:   '내 식단에 맞춘 추천 순위는 프리미엄 기능이에요',
+  coach:  'AI 식단 코치는 프리미엄 기능이에요',
+  goal:   '목표별 식단 추천은 프리미엄 기능이에요',
+  plan:   '프리미엄으로 더 자세히 관리해요',
+};
+
+const SLOTS = ['아침','점심','저녁','간식'];
+const SERVINGS = [0.5, 1, 1.5, 2];
+const WEEKDAY = '일월화수목금토';
+const AN_STEPS = {
+  device: ['사진 확인','온디바이스 모델(MobileNetV3)로 분류','음식명과 신뢰도 계산'],
+  cloud:  ['사진 확인','외부 AI 모델로 정밀 분석','음식명과 신뢰도 계산'],
+};
+const MODEL_NAME = { device:'온디바이스 AI', cloud:'외부 AI 모델' };
+const STATUS_TEXT = { low:'부족', ok:'적정', high:'과다' };
+const STATUS_ICON = { low:'▼', ok:'●', high:'▲' };
+const STORE_KEY = 'eatpick-prototype-v1';
+
+/* ================= 상태 ================= */
+const $ = (s, r = document) => r.querySelector(s);
+const uid = () => 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`; };
+
+function seedMeals(){
+  return [
+    { id: uid(), food:'yogurt',   servings:1, slot:'아침', time:'08:10', source:'sample' },
+    { id: uid(), food:'bibimbap', servings:1, slot:'점심', time:'12:40', source:'sample' },
+  ];
+}
+function freshState(){
+  return { day: todayKey(), premium:false, scansLeft:3, meals: seedMeals(), cart:[], removedAuto:[],
+           shopMode:'basic', reportPeriod:'week', goalTab:'근성장', tab:'home' };
+}
+let state = freshState();
+try {
+  const raw = localStorage.getItem(STORE_KEY);
+  if (raw) {
+    const s = JSON.parse(raw);
+    if (s && s.day === todayKey()) state = Object.assign(freshState(), s);
+    else if (s) state.premium = !!s.premium;
+  }
+} catch (e) { /* 저장소를 못 쓰면 메모리에서만 동작 */ }
+state.tab = 'home';
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+let cap = null;      // 촬영 흐름의 현재 상태
+let pickMode = 'edit';
+
+/* ================= 유틸 ================= */
+const fmt = n => Math.round(n).toLocaleString('ko-KR');
+function fmtAmt(key, v){
+  const u = META[key].unit;
+  if (u === 'mg' || u === 'kcal' || v >= 10 || v === 0) return fmt(v);
+  return (Math.round(v * 10) / 10).toLocaleString('ko-KR');
+}
+const pct = (key, v) => Math.round(v / TARGET[key] * 100);
+function statusOf(key, p){
+  if (META[key].limit) return p > 100 ? 'high' : 'ok';
+  return p < 80 ? 'low' : (p > 120 ? 'high' : 'ok');
+}
+const servLabel = v => `${v}인분`;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const icon = (name, cls = '') => `<svg class="ic ${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const photoTile = (id, size = '') => `<span class="ph ${FOODS[id].bg} ${size}" aria-hidden="true"><span class="emo">${FOODS[id].emoji}</span></span>`;
+function scaled(id, s){ const f = FOODS[id], o = {}; for (const k in META) o[k] = f[k] * s; return o; }
+function totals(meals){
+  const o = {}; for (const k in META) o[k] = 0;
+  meals.forEach(m => { const n = scaled(m.food, m.servings); for (const k in o) o[k] += n[k]; });
+  return o;
+}
+function defaultSlot(){
+  const d = new Date(), h = d.getHours() + d.getMinutes() / 60;
+  if (h < 10.5) return '아침'; if (h < 15) return '점심'; if (h < 21) return '저녁'; return '간식';
+}
+function packSVG(tint){
+  return `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="7" y="9" width="50" height="46" rx="9" fill="${tint}"/><rect x="13" y="16" width="38" height="24" rx="7" fill="#fff" opacity=".9"/><path d="M19 32c2-7 9-11 16-10 6 1 9.5 5 8.5 9-1 5-7 6.5-12 6.5s-10.5-1.5-12.5-5.5z" fill="#E9C9A3"/><path d="M24 30c3-3 8-4.5 12-3.5" stroke="#D8AE80" stroke-width="1.6" fill="none" stroke-linecap="round"/><rect x="13" y="45" width="22" height="4" rx="2" fill="#fff" opacity=".75"/></svg>`;
+}
+
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2300);
+}
+
+/* ================= 영양정보 라벨 ================= */
+function labelHTML({ band, values, kcalSub, note }){
+  const rows = LABEL_ORDER.map(k => {
+    const m = META[k];
+    if (m.premium && !state.premium) return '';
+    return `<div class="nl-row${m.sub ? ' sub' : ''}"><span class="nm"><b>${m.label}</b>${fmtAmt(k, values[k])}${m.unit}</span><span class="pc">${pct(k, values[k])}%</span></div>`;
+  }).join('');
+  const lock = state.premium ? '' :
+    `<button class="nl-lock" data-act="open-paywall" data-reason="detail">${icon('lock')}<span>당류, 나트륨, 식이섬유는 프리미엄에서 볼 수 있어요</span></button>`;
+  return `<section class="nlabel" aria-label="영양정보">
+    <div class="nl-band"><strong>영양정보</strong><span>${band}</span></div>
+    <div class="nl-kcal"><span class="k-label">열량</span><span class="k-right"><b class="k-num">${fmt(values.kcal)}<small>kcal</small></b><span class="k-sub">${kcalSub}</span></span></div>
+    <div class="nl-colhead">1일 목표 대비 비율</div>
+    ${rows}${lock}
+    <p class="nl-note">${note}</p>
+  </section>`;
+}
+
+function locked(inner, reason, msg){
+  return `<div class="locked"><div class="blurred" inert aria-hidden="true">${inner}</div>
+    <div class="lock-cover"><span class="lk">${icon('lock')}</span><p>${msg}</p>
+    <button class="btn sm dark" data-act="open-paywall" data-reason="${reason}">프리미엄 알아보기</button></div></div>`;
+}
+
+/* ================= 홈 ================= */
+function feedback(t){
+  if (!state.meals.length) return '아직 기록이 없어요. 가운데 카메라 버튼으로 첫 끼니를 찍어보세요.';
+  const p = pct('protein', t.protein);
+  let msg;
+  if (p < 60) msg = `단백질이 목표의 ${p}%예요. 남은 끼니는 단백질 위주로 골라보세요.`;
+  else if (t.kcal > TARGET.kcal) msg = `오늘 목표 열량 ${fmt(TARGET.kcal)}kcal를 넘었어요.`;
+  else msg = `지금까지 ${fmt(t.kcal)}kcal를 먹었어요. 목표까지 ${fmt(TARGET.kcal - t.kcal)}kcal 남았어요.`;
+  if (state.premium) {
+    const sp = pct('sodium', t.sodium);
+    msg += sp > 100 ? ` 나트륨은 벌써 목표의 ${sp}%라 다음 끼니는 국물을 줄이는 게 좋아요.`
+                    : ` 나트륨은 목표의 ${sp}%로 아직 여유가 있어요.`;
+  }
+  return msg;
+}
+
+function renderHome(){
+  const t = totals(state.meals);
+  const d = new Date();
+  const avg = Math.round(WEEK_PROTEIN.reduce((a, b) => a + b, 0) / 7);
+  const slots = SLOTS.map(slot => {
+    const items = state.meals.filter(m => m.slot === slot);
+    const kcal = items.reduce((a, m) => a + FOODS[m.food].kcal * m.servings, 0);
+    const list = items.map(m => {
+      const f = FOODS[m.food], n = scaled(m.food, m.servings);
+      return `<li class="meal">${photoTile(m.food, 'sm')}
+        <div class="meal-tx"><b>${f.name}</b><span><span class="tag">${servLabel(m.servings)}</span><span class="tag">단백질 ${fmtAmt('protein', n.protein)}g</span></span></div>
+        <div class="meal-r"><b>${fmt(n.kcal)}<small>kcal</small></b><span>${m.time}</span></div>
+        <button class="icon-btn sm" data-act="delete-meal" data-id="${m.id}" aria-label="${f.name} 기록 삭제">${icon('close')}</button></li>`;
+    }).join('');
+    return `<section class="slot" aria-label="${slot}">
+      <div class="slot-head"><h3>${slot}</h3>${items.length ? `<span>${fmt(kcal)}kcal</span>` : ''}</div>
+      ${items.length ? `<ul class="meal-list">${list}</ul>` : `<button class="slot-empty" data-act="open-capture" data-slot="${slot}">${icon('camera')}${slot} 사진으로 기록하기</button>`}
+    </section>`;
+  }).join('');
+
+  $('#screen-home').innerHTML = `
+    <p class="date">${d.getMonth() + 1}월 ${d.getDate()}일 ${WEEKDAY[d.getDay()]}요일</p>
+    <h1 class="h1">오늘 먹은 것</h1>
+    ${labelHTML({ band:'오늘 총 섭취량', values:t, kcalSub:`목표 ${fmt(TARGET.kcal)}kcal의 ${pct('kcal', t.kcal)}%`, note:'1일 목표는 예시 프로필(근성장) 기준이에요.' })}
+    <div class="feedback"><span class="fb-ic">${icon('spark', 'fill')}</span><p><b>${state.premium ? '상세 피드백' : '간단 피드백'}</b>${feedback(t)}</p></div>
+    <button class="nudge" data-act="tab" data-tab="shop"><span><b>최근 7일 단백질이 하루 평균 ${TARGET.protein - avg}g 부족해요</b><small>부족한 영양소에 맞춘 식품 추천 보기</small></span>${icon('chev')}</button>
+    <h2 class="h2">끼니별 기록</h2>
+    ${slots}`;
+}
+
+/* ================= 분석 ================= */
+function proteinChart(){
+  const W = 320, H = 178, L = 30, R = 8, T = 14, B = 26;
+  const pw = W - L - R, ph = H - T - B, max = 110;
+  const y = v => T + ph - (v / max) * ph;
+  const slot = pw / 7, bw = Math.min(24, slot * 0.56), base = y(0);
+  let g = '';
+  [0, 50].forEach(v => {
+    g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="ytick" x="${L - 7}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+  });
+  g += `<line class="target" x1="${L}" x2="${W - R}" y1="${y(100)}" y2="${y(100)}"/><text class="ytick" x="${L - 7}" y="${y(100) + 4}" text-anchor="end">100</text><text class="tlabel" x="${W - R}" y="${y(100) - 6}" text-anchor="end">권장 100g</text>`;
+  let hits = '';
+  WEEK_PROTEIN.forEach((v, i) => {
+    const d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (7 - i));
+    const x = L + i * slot + (slot - bw) / 2, yt = y(v), r = 4;
+    g += `<path class="bar" data-i="${i}" d="M${x},${base} V${yt + r} Q${x},${yt} ${x + r},${yt} H${x + bw - r} Q${x + bw},${yt} ${x + bw},${yt + r} V${base} Z"/>`;
+    g += `<text class="xtick" x="${x + bw / 2}" y="${H - 8}" text-anchor="middle">${WEEKDAY[d.getDay()]}</text>`;
+    const tip = `${d.getMonth() + 1}월 ${d.getDate()}일 단백질 ${v}g`;
+    hits += `<rect class="hit" x="${L + i * slot}" y="${T}" width="${slot}" height="${ph}" tabindex="0" role="img" aria-label="${tip}" data-i="${i}" data-tip="${tip}" data-ty="${yt}"/>`;
+  });
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="group" aria-label="최근 7일 하루 단백질 섭취량 막대그래프, 권장량 100g 기준선 포함">${g}${hits}</svg><div class="chart-tip" aria-hidden="true"></div></div>`;
+}
+
+function renderReport(){
+  const avg = Math.round(WEEK_PROTEIN.reduce((a, b) => a + b, 0) / 7);
+  const gap = TARGET.protein - avg;
+  const r = REPORT[state.reportPeriod];
+  const rows = REPORT_KEYS.map(k => {
+    const p = pct(k, r[k]), s = statusOf(k, p);
+    return `<tr><th scope="row">${META[k].label}</th><td>${fmtAmt(k, r[k])}${META[k].unit}</td><td>${p}%</td><td><span class="st ${s}"><span aria-hidden="true">${STATUS_ICON[s]}</span>${STATUS_TEXT[s]}</span></td></tr>`;
+  }).join('');
+  const detail = `<section class="card">
+      <div class="card-head"><h3 class="card-title">상세 리포트</h3>
+        <div class="seg sm" role="group" aria-label="기간">${['week', 'month'].map(p => `<button data-act="report-period" data-p="${p}" aria-pressed="${state.reportPeriod === p}">${p === 'week' ? '주간' : '월간'}</button>`).join('')}</div></div>
+      <p class="muted">${r.title}을 1일 목표와 비교했어요.</p>
+      <table class="rtable"><thead><tr><th scope="col">영양소</th><th scope="col">평균</th><th scope="col">목표 대비</th><th scope="col">상태</th></tr></thead><tbody>${rows}</tbody></table>
+    </section>`;
+  const w = REPORT.week;
+  const coach = `<section class="card"><div class="coach"><span class="coach-av">${icon('spark', 'fill')}</span>
+      <p><b>잇픽 AI 코치</b>최근 7일 단백질은 하루 평균 ${w.protein}g으로 목표보다 ${TARGET.protein - w.protein}g 적었고, 나트륨은 평균 ${fmt(w.sodium)}mg으로 목표 ${fmt(TARGET.sodium)}mg을 넘었어요. 저녁 국물 요리를 한 번 줄이고 닭가슴살 1팩(단백질 약 23g)과 삶은 달걀 2개(약 13g)를 더하면 부족한 단백질을 채울 수 있어요.</p></div></section>`;
+  const srRows = WEEK_PROTEIN.map((v, i) => { const d = new Date(); d.setDate(d.getDate() - (7 - i)); return `<tr><td>${d.getMonth() + 1}월 ${d.getDate()}일</td><td>${v}g</td></tr>`; }).join('');
+
+  $('#screen-report').innerHTML = `
+    <h1 class="h1">식단 분석</h1>
+    <section class="card">
+      <h2 class="card-title">최근 7일 단백질</h2>
+      <div class="stat"><b>${avg}g</b><span>하루 평균</span></div>
+      <p class="muted">권장량 ${TARGET.protein}g보다 하루 ${gap}g 적게 먹었어요.</p>
+      ${proteinChart()}
+      <table class="sr-only"><caption>최근 7일 단백질 섭취량</caption><thead><tr><th>날짜</th><th>단백질</th></tr></thead><tbody>${srRows}</tbody></table>
+      <button class="btn primary" data-act="tab" data-tab="shop">부족한 단백질 채우기</button>
+    </section>
+    <h2 class="h2">주간·월간 리포트</h2>
+    ${state.premium ? detail : locked(detail, 'report', '주간·월간 상세 리포트는 프리미엄에서 볼 수 있어요')}
+    <h2 class="h2">AI 식단 코치</h2>
+    ${state.premium ? coach : locked(coach, 'coach', '내 식습관과 목표를 보고 조언하는 AI 식단 코치는 프리미엄 기능이에요')}
+    <h2 class="h2">잇픽 AI가 분석하는 과정</h2>
+    <section class="card">
+      <ol class="pipe">
+        <li><h4>음식 인식</h4><ul><li>음식 사진 업로드</li><li>무료: 온디바이스 모델(MobileNetV3)</li><li>프리미엄: 외부 AI 모델</li><li>예측 음식명과 신뢰도</li><li>사용자 확인과 수정</li></ul></li>
+        <li><h4>영양 계산</h4><ul><li>섭취량 입력</li><li>영양 DB 조회</li><li>칼로리와 탄단지 계산</li><li>하루 누적 식단 저장</li></ul></li>
+        <li><h4>식단 분석</h4><ul><li>목표 영양과 비교</li><li>과다·부족 영양소 분석</li><li>개인 맞춤 음식 추천</li></ul></li>
+      </ol>
+      <p class="muted" style="margin-bottom:0">무료 플랜은 자체 모델을 휴대폰에서 직접 실행하는 온디바이스 방식이라 사용자가 늘어도 분석 비용이 늘지 않아요. 프리미엄은 외부 고성능 AI 모델로 더 정확하게 분석해요.</p>
+    </section>`;
+}
+
+/* ================= 추천 ================= */
+function renderShop(){
+  const mode = state.premium ? state.shopMode : 'basic';
+  const avg = Math.round(WEEK_PROTEIN.reduce((a, b) => a + b, 0) / 7);
+  const list = PRODUCTS.slice().sort((a, b) => mode === 'ai' ? a.aiRank - b.aiRank : a.basicRank - b.basicRank);
+  const items = list.map((p, i) => {
+    let change = '';
+    if (mode === 'ai') {
+      const diff = p.basicRank - p.aiRank;
+      if (diff > 0) change = `<small class="up"><span aria-hidden="true">▲${diff}</span><span class="sr-only">기본 순위보다 ${diff}계단 위</span></small>`;
+      else if (diff < 0) change = `<small class="down"><span aria-hidden="true">▼${-diff}</span><span class="sr-only">기본 순위보다 ${-diff}계단 아래</span></small>`;
+    }
+    const inCart = state.cart.includes(p.id);
+    return `<li class="prod">
+      <div class="prod-rank">${i + 1}위${change}</div>
+      <div class="prod-img">${packSVG(p.tint)}</div>
+      <div>
+        <b class="prod-name">${p.name}</b>
+        <span class="prod-unit">${p.unit}</span>
+        <div class="prod-meta"><span class="price">${fmt(p.price)}원</span><span class="deliv ${p.fast ? 'fast' : ''}">${p.fast ? icon('bolt', 'fill') + '로켓배송 가능' : '일반배송'}</span></div>
+      </div>
+      ${mode === 'ai' ? `<div class="reasons" aria-label="추천 이유">${p.reasons.map(x => `<span>${x}</span>`).join('')}</div>` : ''}
+      <div class="prod-actions">
+        <button class="btn sm ${inCart ? 'line' : 'dark'}" data-act="add-cart" data-pid="${p.id}" aria-pressed="${inCart}" aria-label="${p.name} 장보기 목록에 담기">${inCart ? icon('check') + '담았어요' : icon('plus') + '목록에 담기'}</button>
+        <button class="btn sm line" data-act="open-coupang" aria-label="${p.name} 쿠팡에서 보기">쿠팡에서 보기</button>
+      </div>
+    </li>`;
+  }).join('');
+
+  const autos = AUTO_ITEMS.filter(a => (!a.premium || state.premium) && !state.removedAuto.includes(a.id));
+  const mine = state.cart.map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean);
+  const count = autos.length + mine.length;
+  const cartRows =
+    autos.map(a => `<li><span class="tag-auto">자동</span><div><b>${a.name}</b><span>${a.why}</span></div><button class="icon-btn sm" data-act="remove-auto" data-id="${a.id}" aria-label="${a.name} 목록에서 빼기">${icon('close')}</button></li>`).join('') +
+    mine.map(p => `<li><span class="tag-mine">담음</span><div><b>${p.name}</b><span>${p.unit}, ${fmt(p.price)}원</span></div><button class="icon-btn sm" data-act="remove-cart" data-id="${p.id}" aria-label="${p.name} 목록에서 빼기">${icon('close')}</button></li>`).join('');
+
+  $('#screen-shop').innerHTML = `
+    <h1 class="h1">맞춤 장보기</h1>
+    <section class="basis">
+      <p class="basis-title">${icon('spark', 'fill')}최근 7일 AI 분석</p>
+      <div class="basis-nums"><div><span>단백질 권장량</span><b>${TARGET.protein}g</b></div><div><span>평균 섭취량</span><b>${avg}g</b></div></div>
+      <div class="meter" role="img" aria-label="권장량의 ${pct('protein', avg)}%"><i style="width:${pct('protein', avg)}%"></i></div>
+      <p class="basis-out">하루 ${TARGET.protein - avg}g이 부족해서 고단백 식품을 추천해요.</p>
+    </section>
+    <div class="seg shop-seg" role="group" aria-label="추천 방식">
+      <button data-act="shop-mode" data-mode="basic" aria-pressed="${mode === 'basic'}">기본 추천</button>
+      <button data-act="shop-mode" data-mode="ai" aria-pressed="${mode === 'ai'}">${state.premium ? '' : icon('lock')}잇픽 AI 맞춤</button>
+    </div>
+    <p class="muted">${mode === 'ai'
+      ? '쿠팡에서 가져온 상품을 인기순 그대로가 아니라 내 부족 영양소, 식습관, 목표 기준으로 다시 정렬했어요.'
+      : '고단백 상품을 기본 순서로 보여줘요. 잇픽 AI 맞춤은 내 식단 기록으로 순위를 다시 매겨요.'}</p>
+    <section class="card list-card" aria-label="추천 상품">
+      <p class="demo-note">상품명과 가격은 시연용 예시예요.</p>
+      <ol class="prod-list">${items}</ol>
+    </section>
+    <h2 class="h2">장보기 목록 <span class="count">${count}</span></h2>
+    <section class="card">
+      <p class="muted" style="margin-top:0">부족한 영양소를 채울 식품을 자동으로 담아뒀어요.</p>
+      ${count
+        ? `<ul class="cart-list">${cartRows}</ul><button class="btn primary" data-act="send-all">쿠팡에서 한 번에 보기</button>`
+        : `<p class="empty">목록이 비었어요. 위 추천 상품을 담아보세요.</p>`}
+    </section>
+    <p class="fine">구매 링크는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있어요.</p>`;
+}
+
+/* ================= 내 정보 ================= */
+function goalHTML(){
+  const g = state.goalTab;
+  let tk = 0, tp = 0;
+  const rows = GOAL_PLANS[g].map(([slot, foods]) => {
+    const k = foods.reduce((a, [id, s]) => a + FOODS[id].kcal * s, 0);
+    const p = foods.reduce((a, [id, s]) => a + FOODS[id].protein * s, 0);
+    tk += k; tp += p;
+    return `<li class="plan-meal"><span class="pm-slot">${slot}</span><span class="pm-foods">${foods.map(([id, s]) => FOODS[id].name + (s !== 1 ? ` ${s}인분` : '')).join(', ')}</span><span class="pm-num">${fmt(k)}kcal<small>단백질 ${fmt(p)}g</small></span></li>`;
+  }).join('');
+  return `<section class="card">
+      <div class="seg sm" role="group" aria-label="목표">${Object.keys(GOAL_PLANS).map(k => `<button data-act="goal-tab" data-g="${k}" aria-pressed="${k === g}">${k}</button>`).join('')}</div>
+      <ul class="plan-list">${rows}</ul>
+      <p class="plan-total">하루 합계 약 ${fmt(tk)}kcal, 단백질 ${fmt(tp)}g</p>
+      <p class="muted" style="margin-bottom:0">예시 식단이에요. 실제 서비스에서는 내 기록과 목표에 맞춰 바뀌어요.</p>
+    </section>`;
+}
+
+function renderMy(){
+  const cell = v => v === true ? `${icon('check')}<span class="sr-only">가능</span>`
+                  : v === false ? `<span class="no" aria-hidden="true">—</span><span class="sr-only">없음</span>` : v;
+  const rows = CMP_ROWS.map(([f, a, b]) => `<tr><th scope="row">${f}</th><td>${cell(a)}</td><td class="prem">${cell(b)}</td></tr>`).join('');
+  const goal = goalHTML();
+  $('#screen-my').innerHTML = `
+    <div class="profile"><span class="avatar" aria-hidden="true">잇</span>
+      <div><h1 class="h1 tight">잇픽러 님</h1>
+      <span class="tag">목표 근성장</span><span class="tag">하루 ${fmt(TARGET.kcal)}kcal</span><span class="tag">단백질 ${TARGET.protein}g</span></div>
+    </div>
+    <section class="card plan-card ${state.premium ? 'is-premium' : ''}">
+      <p class="plan-now">${state.premium ? '프리미엄을 쓰고 있어요' : '무료 플랜을 쓰고 있어요'}</p>
+      <p class="muted">${state.premium ? '외부 AI 모델로 무제한 인식하고, 상세 분석, 맞춤 추천, 리포트를 쓸 수 있어요.' : `휴대폰 안의 온디바이스 AI로 분석해요. 오늘 사진 인식이 ${state.scansLeft}회 남았어요.`}</p>
+      ${state.premium
+        ? `<button class="btn line" data-act="set-plan" data-plan="free">무료 플랜으로 바꾸기</button>`
+        : `<button class="btn primary" data-act="open-paywall" data-reason="plan">프리미엄 시작하기</button>`}
+    </section>
+    <h2 class="h2">무료와 프리미엄 비교</h2>
+    <section class="card cmp-card">
+      <table class="cmp"><thead><tr><th scope="col"><span class="sr-only">기능</span></th><th scope="col">무료</th><th scope="col" class="prem">프리미엄</th></tr></thead><tbody>${rows}</tbody></table>
+    </section>
+    <h2 class="h2">목표별 식단 추천</h2>
+    ${state.premium ? goal : locked(goal, 'goal', '다이어트, 유지, 근성장 맞춤 식단은 프리미엄에서 볼 수 있어요')}
+    <h2 class="h2">시연 설정</h2>
+    <section class="card">
+      <p class="muted" style="margin-top:0">이 프로토타입의 영양 수치, 상품 정보, 가격은 발표 시연용 예시예요.</p>
+      <button class="btn line" data-act="reset-demo">시연 데이터 처음으로 되돌리기</button>
+    </section>`;
+}
+
+/* ================= 공통 렌더 ================= */
+function renderAppbar(){
+  const c = $('#plan-chip');
+  c.className = 'plan-chip' + (state.premium ? ' is-premium' : '');
+  c.innerHTML = state.premium ? `${icon('star', 'fill')}프리미엄` : '무료 플랜';
+  c.setAttribute('aria-label', `시연용 요금제 바꾸기, 지금은 ${state.premium ? '프리미엄' : '무료 플랜'}`);
+}
+function renderTabs(){
+  document.querySelectorAll('.tabbar [data-tab]').forEach(b => {
+    if (b.dataset.tab === state.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  ['home', 'report', 'shop', 'my'].forEach(s => { $('#screen-' + s).hidden = state.tab !== s; });
+}
+function render(){ renderAppbar(); renderHome(); renderReport(); renderShop(); renderMy(); renderTabs(); }
+
+/* ================= 오버레이 ================= */
+function showOverlay(name){
+  const el = $('#ov-' + name); el.hidden = false;
+  const f = el.querySelector('button, input');
+  if (f) f.focus({ preventScroll:true }); else el.focus({ preventScroll:true });
+}
+const hideOverlay = name => { $('#ov-' + name).hidden = true; };
+const isOpen = name => !$('#ov-' + name).hidden;
+
+let anTimers = [];
+const clearTimers = () => { anTimers.forEach(clearTimeout); anTimers = []; };
+
+function openCapture(slot){
+  cap = { slot: slot || defaultSlot(), origin:null, model:'device', food:null, cands:null, servings:1, imageURL:null };
+  renderCapture(); showOverlay('capture');
+}
+function renderCapture(){
+  $('#cap-slots').innerHTML = SLOTS.map(s => `<button data-act="cap-slot" data-slot="${s}" aria-pressed="${s === cap.slot}">${s}</button>`).join('');
+  $('#cap-scans').innerHTML = state.premium
+    ? `${icon('star', 'fill')}외부 AI 모델로 무제한 인식해요`
+    : `온디바이스 AI로 분석해요. 오늘 ${state.scansLeft}회 남았어요 (하루 5회)`;
+  $('#cap-samples').innerHTML = SAMPLES.map((s, i) => `<button class="sample" data-act="pick-sample" data-i="${i}">${photoTile(s.food)}<span>${FOODS[s.food].name}</span></button>`).join('');
+}
+function closeCapture(){
+  clearTimers();
+  ['analyzing', 'result', 'pick', 'capture'].forEach(hideOverlay);
+  if (cap && cap.imageURL) URL.revokeObjectURL(cap.imageURL);
+  cap = null;
+}
+function consumeScan(){
+  if (state.premium) return true;
+  if (state.scansLeft <= 0) { openPaywall('scan'); return false; }
+  state.scansLeft -= 1; save(); renderCapture(); renderMy();
+  return true;
+}
+
+function runAnalyzing(next){
+  const ov = $('#ov-analyzing');
+  const photo = cap.origin === 'upload' ? `<img src="${cap.imageURL}" alt="">` : photoTile(cap.food);
+  const steps = AN_STEPS[cap.model];
+  ov.innerHTML = `<div class="an-photo">${photo}<div class="scanline"></div></div>
+    <ol class="an-steps">${steps.map(s => `<li><span class="dot">${icon('check')}</span>${s}</li>`).join('')}</ol>
+    <p class="an-note">${cap.model === 'cloud' ? '프리미엄: 외부 AI 모델로 분석해요' : '무료: 휴대폰 안에서 바로 분석해요'}</p>`;
+  showOverlay('analyzing');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const step = reduce ? 160 : 520;
+  const lis = ov.querySelectorAll('.an-steps li');
+  clearTimers();
+  lis[0].classList.add('now');
+  steps.forEach((_, i) => anTimers.push(setTimeout(() => {
+    lis[i].classList.remove('now'); lis[i].classList.add('done');
+    if (lis[i + 1]) lis[i + 1].classList.add('now');
+  }, step * (i + 1))));
+  anTimers.push(setTimeout(() => { hideOverlay('analyzing'); next(); }, step * steps.length + (reduce ? 120 : 320)));
+}
+
+function openResult(){ renderResult(); showOverlay('result'); $('#res-body').scrollTop = 0; }
+function renderResult(){
+  const f = FOODS[cap.food], n = scaled(cap.food, cap.servings);
+  const before = totals(state.meals).protein;
+  const ai = cap.origin === 'sample' && cap.cands;
+  const cand = ai ? cap.cands.find(c => c[0] === cap.food) : null;
+  const isTop = !!ai && cap.cands[0][0] === cap.food;
+  const kicker = (isTop ? 'AI 인식 결과' : (cand ? 'AI 후보에서 고른 음식' : '목록에서 고른 음식'))
+    + (ai ? `<span class="model-badge ${cap.model}">${MODEL_NAME[cap.model]}</span>` : '');
+  const photo = cap.origin === 'upload' && cap.imageURL ? `<img src="${cap.imageURL}" alt="올린 음식 사진">` : photoTile(cap.food, 'md');
+  const conf = cand ? `<div class="conf"><span>신뢰도 ${cand[1]}%</span><span class="conf-bar" aria-hidden="true"><i style="width:${cand[1]}%"></i></span></div>` : '';
+  const low = isTop && cand[1] < 80 ? `<p class="notice">${icon('alert')}<span>신뢰도가 낮아요. 아래 후보 중에 맞는 음식이 있는지 확인해 주세요.</span></p>` : '';
+  const up = cap.origin === 'upload' ? `<p class="notice info">${icon('info')}<span>시연 버전이라 올린 사진은 실제 모델 대신 목록에서 골랐어요.</span></p>` : '';
+  const chips = (ai ? cap.cands.map(([id, p]) => `<button class="chip" data-act="choose-cand" data-food="${id}" aria-pressed="${id === cap.food}">${FOODS[id].name}<small>${p}%</small></button>`).join('') : '')
+    + `<button class="chip" data-act="open-pick" data-mode="edit">${icon('search')}다른 음식 찾기</button>`;
+
+  $('#res-body').innerHTML = `
+    <div class="res-top">${photo}<div class="res-id"><p class="res-kicker">${kicker}</p><p class="res-name">${f.name}</p>${conf}</div></div>
+    ${low}${up}
+    <h3 class="h3">${ai ? '다른 음식인가요?' : '음식 바꾸기'}</h3>
+    <div class="cands">${chips}</div>
+    <h3 class="h3">먹은 양</h3>
+    <div class="seg" role="group" aria-label="먹은 양">${SERVINGS.map(v => `<button data-act="set-serving" data-v="${v}" aria-pressed="${v === cap.servings}">${servLabel(v)}</button>`).join('')}</div>
+    <p class="muted small">1인분은 ${f.serving} 기준이에요.</p>
+    <h3 class="h3">끼니</h3>
+    <div class="seg" role="group" aria-label="끼니">${SLOTS.map(s => `<button data-act="res-slot" data-slot="${s}" aria-pressed="${s === cap.slot}">${s}</button>`).join('')}</div>
+    <div class="res-label">${labelHTML({ band:`${servLabel(cap.servings)} 기준`, values:n, kcalSub:`하루 목표 ${fmt(TARGET.kcal)}kcal의 ${pct('kcal', n.kcal)}%`, note:'영양 수치는 시연용 예시예요. 실제 서비스는 영양 DB를 조회해 계산해요.' })}</div>
+    <p class="impact">기록하면 오늘 단백질이 <b>${fmtAmt('protein', before)}g</b>에서 <b>${fmtAmt('protein', before + n.protein)}g</b>이 돼요. 목표는 ${TARGET.protein}g이에요.</p>`;
+  $('#res-save').textContent = `${cap.slot}으로 기록하기`;
+}
+
+function openPick(mode){
+  pickMode = mode;
+  $('#pick-note').innerHTML = mode === 'upload'
+    ? `<div class="pick-thumb"><img src="${cap.imageURL}" alt="올린 음식 사진"><p class="muted" style="margin:0">시연 버전이라 실제 모델 대신 목록에서 음식을 골라요.</p></div>`
+    : '';
+  $('#pick-q').value = '';
+  renderPickList('');
+  showOverlay('pick');
+  $('#pick-q').focus({ preventScroll:true });
+}
+function renderPickList(q){
+  const query = q.trim();
+  const ids = Object.keys(FOODS).filter(id => !query || FOODS[id].name.includes(query));
+  $('#pick-list').innerHTML = ids.length
+    ? ids.map(id => `<li><button class="pick-item" data-act="pick-food" data-food="${id}">${photoTile(id, 'sm')}<span class="pi-tx"><b>${FOODS[id].name}</b><small>1인분 기준 ${FOODS[id].serving}</small></span><span class="pi-kc">${fmt(FOODS[id].kcal)}kcal</span></button></li>`).join('')
+    : `<li><p class="empty" style="padding:16px">‘${esc(query)}’에 맞는 음식이 없어요. 다른 이름으로 찾아보세요.</p></li>`;
+}
+
+/* ================= 시트 ================= */
+function openSheet(html){
+  const w = $('#sheet');
+  w.querySelector('.sheet').innerHTML = `<div class="grab"></div>${html}`;
+  w.hidden = false;
+  const b = w.querySelector('button'); if (b) b.focus({ preventScroll:true });
+}
+const closeSheet = () => { $('#sheet').hidden = true; };
+function openPaywall(reason){
+  openSheet(`<h2 id="sheet-title">${PAY_TITLES[reason] || PAY_TITLES.plan}</h2>
+    <p class="muted">프리미엄은 월 4,900원이에요.</p>
+    <ul class="benefits">
+      <li>${icon('check')}<span>외부 고성능 AI 모델로 더 정확한 음식 인식</span></li>
+      <li>${icon('check')}<span>음식 사진 인식 무제한</span></li>
+      <li>${icon('check')}<span>당류, 나트륨, 식이섬유까지 상세 분석</span></li>
+      <li>${icon('check')}<span>내 식단 데이터 기반 맞춤 추천</span></li>
+      <li>${icon('check')}<span>주간·월간 리포트와 AI 식단 코치</span></li>
+      <li>${icon('check')}<span>다이어트, 유지, 근성장 목표별 식단</span></li>
+    </ul>
+    <button class="btn primary" data-act="start-premium">프리미엄 시작하기</button>
+    <button class="btn ghost" data-act="close-sheet">나중에 할게요</button>
+    <p class="fine center">발표 시연용 화면이라 실제 결제는 되지 않아요.</p>`);
+}
+function openPlanSheet(){
+  openSheet(`<h2 id="sheet-title">시연용 요금제</h2>
+    <p class="muted">발표 중에 무료와 프리미엄 화면을 바로 바꿔볼 수 있어요.</p>
+    <div class="plan-opts">
+      <button class="plan-opt" data-act="set-plan" data-plan="free" aria-pressed="${!state.premium}"><b>무료 플랜</b><span>온디바이스 AI로 하루 5회 인식, 기본 분석과 기본 추천</span></button>
+      <button class="plan-opt" data-act="set-plan" data-plan="premium" aria-pressed="${state.premium}"><b>프리미엄, 월 4,900원</b><span>외부 AI 모델로 무제한 인식, 상세 분석, 맞춤 추천, 리포트</span></button>
+    </div>`);
+}
+function afterPlanChange(){
+  save(); render();
+  if (cap && isOpen('capture')) renderCapture();
+  if (cap && isOpen('result')) renderResult();
+}
+
+/* ================= 동작 ================= */
+const actions = {
+  'tab': el => { state.tab = el.dataset.tab; renderTabs(); $('#screens').scrollTop = 0; save(); },
+  'open-capture': el => openCapture(el.dataset.slot),
+  'close-capture': () => closeCapture(),
+  'cap-slot': el => { cap.slot = el.dataset.slot; renderCapture(); },
+  'pick-photo': () => $('#photo-input').click(),
+  'pick-sample': el => {
+    if (!consumeScan()) return;
+    const s = SAMPLES[+el.dataset.i];
+    const model = state.premium ? 'cloud' : 'device';
+    const cands = model === 'cloud' ? s.pcands : s.cands;
+    Object.assign(cap, { origin:'sample', model, food:cands[0][0], cands, servings:1 });
+    runAnalyzing(openResult);
+  },
+  'choose-cand': el => { cap.food = el.dataset.food; renderResult(); },
+  'open-pick': el => openPick(el.dataset.mode),
+  'close-pick': () => hideOverlay('pick'),
+  'pick-food': el => {
+    cap.food = el.dataset.food;
+    hideOverlay('pick');
+    if (pickMode === 'upload') openResult(); else renderResult();
+  },
+  'set-serving': el => { cap.servings = +el.dataset.v; renderResult(); },
+  'res-slot': el => { cap.slot = el.dataset.slot; renderResult(); },
+  'retake': () => { hideOverlay('result'); renderCapture(); },
+  'save-meal': () => {
+    const d = new Date();
+    const time = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+    const slot = cap.slot;
+    state.meals.push({ id: uid(), food: cap.food, servings: cap.servings, slot, time, source: cap.origin });
+    closeCapture();
+    state.tab = 'home'; save(); render(); $('#screens').scrollTop = 0;
+    toast(`${slot}으로 기록했어요`);
+  },
+  'delete-meal': el => {
+    state.meals = state.meals.filter(m => m.id !== el.dataset.id);
+    save(); render(); toast('기록을 삭제했어요');
+  },
+  'open-plan': () => openPlanSheet(),
+  'set-plan': el => {
+    const p = el.dataset.plan === 'premium', changed = state.premium !== p;
+    state.premium = p; closeSheet(); afterPlanChange();
+    if (changed) toast(p ? '프리미엄으로 바꿨어요' : '무료 플랜으로 바꿨어요');
+  },
+  'open-paywall': el => openPaywall(el.dataset.reason),
+  'start-premium': () => { state.premium = true; closeSheet(); afterPlanChange(); toast('프리미엄을 시작했어요'); },
+  'close-sheet': () => closeSheet(),
+  'shop-mode': el => {
+    if (el.dataset.mode === 'ai' && !state.premium) return openPaywall('shop');
+    state.shopMode = el.dataset.mode; save(); renderShop();
+  },
+  'add-cart': el => {
+    const p = PRODUCTS.find(x => x.id === el.dataset.pid);
+    if (state.cart.includes(p.id)) { toast('이미 장보기 목록에 있어요'); return; }
+    state.cart.push(p.id); save(); renderShop(); toast(`${p.name}을 장보기 목록에 담았어요`);
+  },
+  'remove-cart': el => { state.cart = state.cart.filter(id => id !== el.dataset.id); save(); renderShop(); },
+  'remove-auto': el => { state.removedAuto.push(el.dataset.id); save(); renderShop(); },
+  'open-coupang': () => toast('시연 화면이에요. 실제 앱에서는 쿠팡 상품 페이지가 열려요'),
+  'send-all': () => toast('실제 앱에서는 목록의 상품을 쿠팡에서 한 번에 보여줘요'),
+  'report-period': el => { state.reportPeriod = el.dataset.p; save(); renderReport(); },
+  'goal-tab': el => { state.goalTab = el.dataset.g; save(); renderMy(); },
+  'reset-demo': () => { state = freshState(); save(); render(); $('#screens').scrollTop = 0; toast('시연 데이터를 처음 상태로 되돌렸어요'); },
+};
+
+document.addEventListener('click', e => {
+  const sheet = $('#sheet');
+  if (e.target === sheet) { closeSheet(); return; }
+  const el = e.target.closest('[data-act]');
+  if (!el) return;
+  const fn = actions[el.dataset.act];
+  if (fn) fn(el, e);
+});
+
+$('#photo-input').addEventListener('change', e => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file || !cap) return;
+  if (!consumeScan()) return;
+  if (cap.imageURL) URL.revokeObjectURL(cap.imageURL);
+  Object.assign(cap, { origin:'upload', model: state.premium ? 'cloud' : 'device', imageURL: URL.createObjectURL(file), food:'kimchistew', cands:null, servings:1 });
+  runAnalyzing(() => openPick('upload'));
+});
+
+$('#pick-q').addEventListener('input', e => renderPickList(e.target.value));
+
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (!$('#sheet').hidden) return closeSheet();
+  if (isOpen('analyzing')) return;
+  if (isOpen('pick')) return hideOverlay('pick');
+  if (isOpen('result')) return actions['retake']();
+  if (isOpen('capture')) return closeCapture();
+});
+
+/* 막대그래프 툴팁 */
+function showTip(hit){
+  const wrap = hit.closest('.chart'); if (!wrap) return;
+  const tip = wrap.querySelector('.chart-tip');
+  const svg = wrap.querySelector('svg');
+  const scale = svg.getBoundingClientRect().width / 320;
+  const hr = hit.getBoundingClientRect(), wr = wrap.getBoundingClientRect();
+  tip.textContent = hit.dataset.tip;
+  tip.style.left = (hr.left - wr.left + hr.width / 2) + 'px';
+  tip.style.top = (parseFloat(hit.dataset.ty) * scale - 6) + 'px';
+  tip.classList.add('show');
+  wrap.querySelectorAll('.bar').forEach(b => b.classList.toggle('on', b.dataset.i === hit.dataset.i));
+}
+function hideTip(wrap){
+  if (!wrap) return;
+  wrap.querySelector('.chart-tip').classList.remove('show');
+  wrap.querySelectorAll('.bar').forEach(b => b.classList.remove('on'));
+}
+document.addEventListener('pointerover', e => { const h = e.target.closest && e.target.closest('.hit'); if (h) showTip(h); });
+document.addEventListener('pointerout', e => { const h = e.target.closest && e.target.closest('.hit'); if (h && !(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('.hit'))) hideTip(h.closest('.chart')); });
+document.addEventListener('focusin', e => { const h = e.target.closest && e.target.closest('.hit'); if (h) showTip(h); });
+document.addEventListener('focusout', e => { const h = e.target.closest && e.target.closest('.hit'); if (h) hideTip(h.closest('.chart')); });
+
+/* 상태바 시계 (데스크톱 기기 프레임용) */
+function tick(){ const d = new Date(); $('#clock').textContent = `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; }
+tick(); setInterval(tick, 30000);
+
+render();
+})();
+</script>
+</body>
+</html>

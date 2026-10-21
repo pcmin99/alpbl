@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "잇픽",
+    "slug": "eatpick",
+    "version": "1.0.0",
+    "scheme": "eatpick",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.eatpick.app"
+    },
+    "android": {
+      "package": "com.eatpick.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "음식 사진을 골라 식사를 기록합니다.",
+          "cameraPermission": "음식 사진을 촬영해 식사를 기록합니다.",
+          "microphonePermission": false
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "extra": {}
+  }
+}

@@ -1,0 +1,43 @@
+18:08:52.774 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.eatpick.ApiIntegrationTest]: ApiIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+18:08:53.067 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.eatpick.EatpickApplication for test class com.eatpick.ApiIntegrationTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.16)
+
+2026-10-20T18:08:53.970+09:00  INFO 29884 --- [eatpick] [           main] com.eatpick.ApiIntegrationTest           : Starting ApiIntegrationTest using Java 17.0.12 with PID 29884 (started by chan in C:\alpbl\.eatpick-build\eatpick\backend)
+2026-10-20T18:08:53.974+09:00  INFO 29884 --- [eatpick] [           main] com.eatpick.ApiIntegrationTest           : The following 1 profile is active: "demo"
+2026-10-20T18:08:57.351+09:00  INFO 29884 --- [eatpick] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-20T18:08:58.437+09:00  INFO 29884 --- [eatpick] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:apitest user=SA
+2026-10-20T18:08:58.446+09:00  INFO 29884 --- [eatpick] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-20T18:09:02.838+09:00  INFO 29884 --- [eatpick] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-10-20T18:09:02.840+09:00  INFO 29884 --- [eatpick] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-10-20T18:09:02.842+09:00  INFO 29884 --- [eatpick] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2026-10-20T18:09:02.944+09:00  INFO 29884 --- [eatpick] [           main] com.eatpick.ApiIntegrationTest           : Started ApiIntegrationTest in 9.616 seconds (process running for 11.49)
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2026-10-20T18:09:07.405+09:00  INFO 29884 --- [eatpick] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.eatpick.LiveModeTest]: LiveModeTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-10-20T18:09:07.417+09:00  INFO 29884 --- [eatpick] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.eatpick.EatpickApplication for test class com.eatpick.LiveModeTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.16)
+
+2026-10-20T18:09:07.631+09:00  INFO 29884 --- [eatpick] [           main] com.eatpick.LiveModeTest                 : Starting LiveModeTest using Java 17.0.12 with PID 29884 (started by chan in C:\alpbl\.eatpick-build\eatpick\backend)
+2026-10-20T18:09:07.631+09:00  INFO 29884 --- [eatpick] [           main] com.eatpick.LiveModeTest                 : The following 1 profile is active: "mysql"
+2026-10-20T18:09:08.745+09:00  INFO 29884 --- [eatpick] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-10-20T18:09:08.747+09:00  INFO 29884 --- [eatpick] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:live user=SA
+2026-10-20T18:09:08.753+09:00  INFO 29884 --- [eatpick] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-10-20T18:09:09.480+09:00  INFO 29884 --- [eatpick] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-10-20T18:09:09.482+09:00  INFO 29884 --- [eatpick] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-10-20T18:09:09.482+09:00  INFO 29884 --- [eatpick] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-10-20T18:09:09.506+09:00  INFO 29884 --- [eatpick] [           main] com.eatpick.LiveModeTest                 : Started LiveModeTest in 2.065 seconds (process running for 18.051)

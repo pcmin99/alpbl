@@ -1,0 +1,11 @@
+export type Nutrient = 'kcal'|'carb'|'protein'|'fat'|'sugar'|'sodium'|'fiber';
+export type Nutrition = Partial<Record<Nutrient,number>>;
+export type Slot = 'breakfast'|'lunch'|'dinner'|'snack';
+export type Food = Nutrition & {id:string;code:string;name:string;emoji:string;serving_label:string;confidence?:number|null};
+export type Meal = Nutrition & {id:string;food_id:string;food_name:string;emoji:string;slot:Slot;servings:number;eaten_at:string};
+export type Me = {id:string;nickname:string;goal_type:string;premium:boolean;aiBackend:string;scansLeft:number;goal:Nutrition};
+export type Home = {date:string;meals:Meal[];total:Nutrition;goal:Nutrition};
+export type Job = {id:string;status:string;simulated:boolean;backend:string;model_version:string;candidates:Food[]};
+export type Product = {id:string;name:string;package_label:string;price:number;fast_delivery:boolean;affiliate_url:string|null;reasons:string[]};
+export type Shopping = {id:string;product_id:string|null;name:string;source:string;reason:string};
+export type Report = {days:number;recordedDays:number;average:Nutrition;goal:Nutrition;daily:(Nutrition&{local_date:string})[];feedback:string};

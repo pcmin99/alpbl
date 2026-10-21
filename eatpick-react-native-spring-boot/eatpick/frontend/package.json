@@ -1,0 +1,36 @@
+{
+  "name": "eatpick-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "export:web": "expo export --platform web"
+  },
+  "dependencies": {
+    "expo": "~54.0.33",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
+    "react-dom": "19.1.0",
+    "react-native-web": "^0.21.0",
+    "expo-image-picker": "~17.0.10",
+    "expo-web-browser": "~15.0.10",
+    "expo-crypto": "~15.0.8",
+    "expo-secure-store": "~15.0.8",
+    "expo-status-bar": "~3.0.9",
+    "react-native-safe-area-context": "~5.6.0",
+    "react-native-svg": "15.12.1",
+    "@expo/vector-icons": "^15.0.3"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.2",
+    "@types/react": "~19.1.10"
+  },
+  "engines": {
+    "node": ">=20.19.4"
+  }
+}

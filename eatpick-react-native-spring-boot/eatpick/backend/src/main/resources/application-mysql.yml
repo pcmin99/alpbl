@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/eatpick?serverTimezone=UTC&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&characterEncoding=UTF-8}
+    username: ${DB_USER:eatpick}
+    password: ${DB_PASSWORD}
+  sql:
+    init:
+      mode: never
+app:
+  demo: false

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: eatpick
+  profiles:
+    default: demo
+  jackson:
+    time-zone: UTC
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+  servlet:
+    session:
+      timeout: 10m
+app:
+  demo: false
+  cors-origins: ${CORS_ORIGINS:http://localhost:8081,http://localhost:19006}
+  mobile-redirect: eatpick://auth
+
+  llm:
+    url: ${LLM_GATEWAY_URL:}
+    key: ${LLM_GATEWAY_KEY:}
+    model: ${LLM_MODEL:unconfigured}
+
+  recommendation:
+    url: ${RECOMMENDATION_API_URL:http://127.0.0.1:8000}
+    key: ${RECOMMENDATION_API_KEY:}

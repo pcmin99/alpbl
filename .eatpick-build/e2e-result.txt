@@ -1,0 +1,2 @@
+CONSOLE Failed to load resource: the server responded with a status of 404 (File not found)
+{"result":"PASS","flows":["demo login","home","sample recognition","meal save","shopping add","premium switch","report"],"pageErrors":[]}

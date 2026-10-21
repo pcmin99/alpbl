@@ -1,0 +1,5 @@
+127.0.0.1 - - [20/Oct/2026 18:11:33] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 18:11:33] "GET /_expo/static/js/web/index-2b37a6f544634d1ccd8b3c0e3ff69b17.js HTTP/1.1" 200 -
+127.0.0.1 - - [20/Oct/2026 18:11:33] code 404, message File not found
+127.0.0.1 - - [20/Oct/2026 18:11:33] "GET /favicon.ico HTTP/1.1" 404 -
+127.0.0.1 - - [20/Oct/2026 18:11:33] "GET /assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.b4eb097d35f44ed943676fd56f6bdc51.ttf HTTP/1.1" 200 -

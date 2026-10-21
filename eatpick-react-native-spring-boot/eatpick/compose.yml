@@ -1,0 +1,60 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: eatpick
+      MYSQL_USER: eatpick
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - eatpick-mysql:/var/lib/mysql
+      - ./database/schema-mysql.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  api:
+    build: ./backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+      recommendation:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: mysql
+      DB_URL: jdbc:mysql://mysql:3306/eatpick?connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&characterEncoding=UTF-8
+      DB_USER: eatpick
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:8081}
+      LLM_GATEWAY_URL: ${LLM_GATEWAY_URL:-}
+      LLM_GATEWAY_KEY: ${LLM_GATEWAY_KEY:-}
+      LLM_MODEL: ${LLM_MODEL:-unconfigured}
+      RECOMMENDATION_API_URL: http://recommendation:8000
+      RECOMMENDATION_API_KEY: ${RECOMMENDATION_API_KEY:?Set RECOMMENDATION_API_KEY}
+    ports:
+      - "8080:8080"
+
+  recommendation:
+    build:
+      context: ../../eatpick-python-algo
+
+    environment:
+      RECOMMENDATION_API_KEY: ${RECOMMENDATION_API_KEY:?Set RECOMMENDATION_API_KEY}
+
+    ports:
+      - "127.0.0.1:8000:8000"
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  eatpick-mysql:
